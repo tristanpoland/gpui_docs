@@ -62,7 +62,7 @@ export default function DocContent({ initialDoc, slug }: DocContentProps) {
       try {
         setIsLoading(true)
         setError(null)
-        const response = await fetch(`/docs/${slug}.md`)
+        const response = await fetch(`/gpui_docs/docs/${slug}.md`)
         if (!response.ok) {
           throw new Error(
             response.status === 404 
