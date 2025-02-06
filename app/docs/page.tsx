@@ -161,7 +161,7 @@ export default function DocsPage() {
   )
 }
 
-function StabilityBadge({ stability }) {
+function StabilityBadge({ stability }: { stability: string }) {
   const colors = {
     stable: "bg-emerald-500/10 text-emerald-500 border-emerald-500/20",
     "in-dev": "bg-cyan-500/10 text-cyan-500 border-cyan-500/20",
@@ -169,7 +169,7 @@ function StabilityBadge({ stability }) {
   }
   
   return (
-    <span className={`px-2 py-1 text-xs rounded-md border ${colors[stability]}`}>
+    <span className={`px-2 py-1 text-xs rounded-md border ${colors[stability as keyof typeof colors]}`}>
       {stability}
     </span>
   )

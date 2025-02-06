@@ -1,7 +1,7 @@
 "use client"
 
-import { useEffect, useState, memo } from 'react'
-import { MDXRemote } from 'next-mdx-remote'
+import { useEffect, useState, memo, ClassAttributes, HTMLAttributes, JSX, OlHTMLAttributes, LiHTMLAttributes, BlockquoteHTMLAttributes, TableHTMLAttributes, ThHTMLAttributes, TdHTMLAttributes } from 'react'
+import { MDXRemote, MDXRemoteSerializeResult } from 'next-mdx-remote'
 import { serialize } from 'next-mdx-remote/serialize'
 import remarkGfm from 'remark-gfm'
 import { notFound } from 'next/navigation'
@@ -12,7 +12,11 @@ const LoadingSpinner = () => (
   </div>
 )
 
-const StabilityBadge = memo(({ stability }) => {
+interface StabilityBadgeProps {
+  stability: 'stable' | 'in-dev' | 'experimental';
+}
+
+const StabilityBadge = memo(({ stability }: StabilityBadgeProps) => {
   const colors = {
     stable: "bg-emerald-500/10 text-emerald-500 border-emerald-500/20",
     "in-dev": "bg-cyan-500/10 text-cyan-500 border-cyan-500/20",
@@ -26,11 +30,22 @@ const StabilityBadge = memo(({ stability }) => {
   )
 })
 
-export default function DocContent({ initialDoc, slug }) {
-  const [mdxSource, setMdxSource] = useState(null)
+interface DocContentProps {
+  initialDoc: {
+    title: string;
+    image?: string;
+    tags: string[];
+    stability: 'stable' | 'in-dev' | 'experimental';
+    excerpt: string;
+  };
+  slug: string;
+}
+
+export default function DocContent({ initialDoc, slug }: DocContentProps) {
+  const [mdxSource, setMdxSource] = useState<MDXRemoteSerializeResult<Record<string, unknown>, Record<string, unknown>> | null>(null)
   const [metadata, setMetadata] = useState(initialDoc)
   const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState(null)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     if (mdxSource && window.Prism) {
@@ -94,7 +109,7 @@ export default function DocContent({ initialDoc, slug }) {
   }, [slug])
 
   const components = {
-    pre: ({ className, ...props }) => {
+    pre: ({ className, ...props }: { className?: string; [key: string]: any }) => {
       const languageMatch = className?.match(/language-(\w+)/)
       const language = languageMatch ? languageMatch[1] : ''
       
@@ -112,7 +127,7 @@ export default function DocContent({ initialDoc, slug }) {
         </div>
       )
     },
-    code: ({ className, ...props }) => {
+    code: ({ className, ...props }: { className?: string; [key: string]: any }) => {
       const isInline = !className?.includes('language-')
       return (
         <code 
@@ -125,14 +140,14 @@ export default function DocContent({ initialDoc, slug }) {
         />
       )
     },
-    h1: (props) => <h1 className="text-3xl font-bold mt-8 mb-4 bg-gradient-to-r from-emerald-500 to-cyan-500 bg-clip-text text-transparent" {...props} />,
-    h2: (props) => <h2 className="text-2xl font-semibold mt-6 mb-3 text-gray-100" {...props} />,
-    h3: (props) => <h3 className="text-xl font-semibold mt-4 mb-2 text-gray-200" {...props} />,
-    p: (props) => <p className="my-4 leading-7 text-gray-300" {...props} />,
-    ul: (props) => <ul className="list-disc list-inside my-4 space-y-2 text-gray-300" {...props} />,
-    ol: (props) => <ol className="list-decimal list-inside my-4 space-y-2 text-gray-300" {...props} />,
-    li: (props) => <li className="ml-4 text-gray-300" {...props} />,
-    a: ({ href, ...props }) => {
+    h1: (props: JSX.IntrinsicAttributes & ClassAttributes<HTMLHeadingElement> & HTMLAttributes<HTMLHeadingElement>) => <h1 className="text-3xl font-bold mt-8 mb-4 bg-gradient-to-r from-emerald-500 to-cyan-500 bg-clip-text text-transparent" {...props} />,
+    h2: (props: JSX.IntrinsicAttributes & ClassAttributes<HTMLHeadingElement> & HTMLAttributes<HTMLHeadingElement>) => <h2 className="text-2xl font-semibold mt-6 mb-3 text-gray-100" {...props} />,
+    h3: (props: JSX.IntrinsicAttributes & ClassAttributes<HTMLHeadingElement> & HTMLAttributes<HTMLHeadingElement>) => <h3 className="text-xl font-semibold mt-4 mb-2 text-gray-200" {...props} />,
+    p: (props: JSX.IntrinsicAttributes & ClassAttributes<HTMLParagraphElement> & HTMLAttributes<HTMLParagraphElement>) => <p className="my-4 leading-7 text-gray-300" {...props} />,
+    ul: (props: JSX.IntrinsicAttributes & ClassAttributes<HTMLUListElement> & HTMLAttributes<HTMLUListElement>) => <ul className="list-disc list-inside my-4 space-y-2 text-gray-300" {...props} />,
+    ol: (props: JSX.IntrinsicAttributes & ClassAttributes<HTMLOListElement> & OlHTMLAttributes<HTMLOListElement>) => <ol className="list-decimal list-inside my-4 space-y-2 text-gray-300" {...props} />,
+    li: (props: JSX.IntrinsicAttributes & ClassAttributes<HTMLLIElement> & LiHTMLAttributes<HTMLLIElement>) => <li className="ml-4 text-gray-300" {...props} />,
+    a: ({ href, ...props }: { href?: string; [key: string]: any }) => {
       const isExternal = href?.startsWith('http')
       return (
         <a 
@@ -143,18 +158,18 @@ export default function DocContent({ initialDoc, slug }) {
         />
       )
     },
-    blockquote: (props) => (
+    blockquote: (props: JSX.IntrinsicAttributes & ClassAttributes<HTMLQuoteElement> & BlockquoteHTMLAttributes<HTMLQuoteElement>) => (
       <blockquote className="border-l-4 border-emerald-500/30 pl-4 my-4 italic text-gray-300" {...props} />
     ),
-    table: (props) => (
+    table: (props: JSX.IntrinsicAttributes & ClassAttributes<HTMLTableElement> & TableHTMLAttributes<HTMLTableElement>) => (
       <div className="overflow-x-auto my-4">
         <table className="min-w-full border-collapse" {...props} />
       </div>
     ),
-    th: (props) => (
+    th: (props: JSX.IntrinsicAttributes & ClassAttributes<HTMLTableHeaderCellElement> & ThHTMLAttributes<HTMLTableHeaderCellElement>) => (
       <th className="border border-gray-800 px-4 py-2 bg-gray-900 text-gray-200" {...props} />
     ),
-    td: (props) => (
+    td: (props: JSX.IntrinsicAttributes & ClassAttributes<HTMLTableDataCellElement> & TdHTMLAttributes<HTMLTableDataCellElement>) => (
       <td className="border border-gray-800 px-4 py-2 text-gray-300" {...props} />
     ),
   }
@@ -201,9 +216,9 @@ export default function DocContent({ initialDoc, slug }) {
   )
 }
 
-function parseYAML(yaml) {
+function parseYAML(yaml: string) {
   const lines = yaml.trim().split('\n')
-  const result = {}
+  const result: { [key: string]: any } = {}
 
   for (const line of lines) {
     const [key, ...values] = line.split(':')

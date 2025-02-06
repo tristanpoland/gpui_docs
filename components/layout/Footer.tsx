@@ -1,7 +1,12 @@
 import React from 'react';
 import { Heart, Github, Twitter } from 'lucide-react';
 
-const FooterLink = ({ href, children }) => (
+interface FooterLinkProps {
+  href: string;
+  children: React.ReactNode;
+}
+
+const FooterLink: React.FC<FooterLinkProps> = ({ href, children }) => (
   <a href={href} className="text-neutral-400 hover:text-neutral-100 transition-colors">
     {children}
   </a>
