@@ -93,6 +93,8 @@ export default function RootLayout({
       <head>
       <script src="/gpui_docs/prism.js"></script>
       <link  href="/gpui_docs/prism.css" rel="stylesheet" />
+      <script src="/prism.js"></script>
+      <link  href="/prism.css" rel="stylesheet" />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased relative overflow-x-hidden`}
